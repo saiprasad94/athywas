@@ -13,7 +13,7 @@ const Signin = () => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/dashboard"); // Redirect to dashboard after signin
+      navigate("/dashboard");
     } catch (err) {
       setError(err.message);
     }
@@ -47,4 +47,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default Signin; // Must have this line
