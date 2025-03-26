@@ -1,0 +1,76 @@
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #fce4ec; /* Light pink background */
+  }
+  
+  .auth-box {
+    background-color: #ffffff; /* White card */
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  .auth-box h2 {
+    color: #e91e63; /* Vibrant pink */
+    margin-bottom: 1.5rem;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .auth-box input {
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border: 1px solid #e91e63;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #212121; /* Dark gray text */
+  }
+  
+  .auth-box input:focus {
+    outline: none;
+    border-color: #f06292; /* Lighter pink on focus */
+    box-shadow: 0 0 5px rgba(233, 30, 99, 0.5);
+  }
+  
+  .auth-box button {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    background-color: #e91e63; /* Pink button */
+    color: #ffffff; /* White text */
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .auth-box button:hover {
+    background-color: #f06292; /* Lighter pink on hover */
+  }
+  
+  .auth-box p {
+    color: #212121;
+    margin-top: 1rem;
+  }
+  
+  .auth-box p a {
+    color: #e91e63;
+    text-decoration: none;
+  }
+  
+  .auth-box p a:hover {
+    text-decoration: underline;
+  }
+  
+  .error-message {
+    color: #d81b60; /* Darker pink for errors */
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+  }
