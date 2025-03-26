@@ -1,37 +1,29 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyD_5MHwa33Use2sx7hqhmHmAzyo7nB7xhc",
-    authDomain: "athywas-598c2.firebaseapp.com",
-    projectId: "athywas-598c2",
-    storageBucket: "athywas-598c2.firebasestorage.app",
-    messagingSenderId: "950377775102",
-    appId: "1:950377775102:web:1db8b18f6c83e52a840aaf"
-};
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_APP_ID,
+  };
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+console.log("Firebase Config:", firebaseConfig);
 
+const existingApps = getApps();
+console.log("Existing Apps:", existingApps.length);
+let app;
+if (existingApps.length === 0) {
+  app = initializeApp(firebaseConfig);
+  console.log("Firebase App Initialized:", app.name);
+} else {
+  app = existingApps[0];
+  console.log("Using Existing Firebase App:", app.name);
+}
 
-// // Import the functions you need from the SDKs you need
-// import { initializeApp } from "firebase/app";
-// import { getAnalytics } from "firebase/analytics";
-// // TODO: Add SDKs for Firebase products that you want to use
-// // https://firebase.google.com/docs/web/setup#available-libraries
+const auth = getAuth(app);
+console.log("Firebase Auth:", auth);
 
-// // Your web app's Firebase configuration
-// // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-// const firebaseConfig = {
-//   apiKey: "AIzaSyD_5MHwa33Use2sx7hqhmHmAzyo7nB7xhc",
-//   authDomain: "athywas-598c2.firebaseapp.com",
-//   projectId: "athywas-598c2",
-//   storageBucket: "athywas-598c2.firebasestorage.app",
-//   messagingSenderId: "950377775102",
-//   appId: "1:950377775102:web:1db8b18f6c83e52a840aaf",
-//   measurementId: "G-4SBM5WDWR5"
-// };
-
-// // Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
+export { auth };

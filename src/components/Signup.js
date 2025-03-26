@@ -9,12 +9,23 @@ const Signup = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  console.log("Auth at render:", auth);
+
   const handleSignup = async (e) => {
     e.preventDefault();
+    setError("");
+    console.log("Signup attempt with:", { email, password });
+    if (!auth) {
+      setError("Firebase Auth not initialized");
+      console.error("Auth is undefined");
+      return;
+    }
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log("Signup success:", userCredential.user);
       navigate("/signin");
     } catch (err) {
+      console.error("Signup failed:", err.code, err.message, err);
       setError(err.message);
     }
   };
@@ -47,4 +58,4 @@ const Signup = () => {
   );
 };
 
-export default Signup; // Must have this line
+export default Signup;
