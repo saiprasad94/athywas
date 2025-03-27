@@ -8,7 +8,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Hardcoded saloon list (can be fetched from a database later)
   const saloons = [
     { id: 1, name: "Saloon 01" },
     { id: 2, name: "Saloon 02" },
@@ -25,10 +24,8 @@ const Dashboard = () => {
     return () => unsubscribe();
   }, [navigate]);
 
-  const handleSaloonSelect = (saloon) => {
-    // Placeholder for future navigation to service selection
-    console.log("Selected saloon:", saloon.name);
-    // Example: navigate(`/services/${saloon.id}`);
+  const handleSaloonSelect = (saloonId) => {
+    navigate(`/services/${saloonId}`); // Navigate to services page
   };
 
   if (loading) {
@@ -50,7 +47,7 @@ const Dashboard = () => {
             <li
               key={saloon.id}
               className="saloon-item"
-              onClick={() => handleSaloonSelect(saloon)}
+              onClick={() => handleSaloonSelect(saloon.id)}
             >
               {saloon.name}
             </li>

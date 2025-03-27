@@ -156,3 +156,44 @@
     background-color: #f06292; /* Lighter pink on hover */
     color: #ffffff; /* White text on hover */
   }
+
+
+  /* Services.js */
+
+.service-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .service-item {
+    background-color: #fce4ec; /* Light pink */
+    color: #212121; /* Dark gray */
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .service-item:hover {
+    background-color: #f06292; /* Lighter pink on hover */
+    color: #ffffff; /* White text on hover */
+  }
+  
+  .back-button {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 1.5rem;
+    background-color: #e91e63; /* Pink button */
+    color: #ffffff; /* White text */
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .back-button:hover {
+    background-color: #f06292; /* Lighter pink on hover */
+  }
