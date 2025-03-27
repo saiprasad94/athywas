@@ -244,3 +244,27 @@
     font-size: 1.1rem;
     margin-bottom: 1rem;
   }
+
+
+  /* Success banner for booking */
+
+.success-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #4caf50; /* Green */
+    color: #ffffff; /* White text */
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.1rem;
+    z-index: 1000; /* Ensure it’s above other content */
+    animation: fadeInOut 5s ease-in-out forwards;
+  }
+  
+  @keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-100%); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-100%); }
+  }

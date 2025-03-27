@@ -6,9 +6,9 @@ import "../styles/AuthStyles.css";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
+  const [successMessage, setSuccessMessage] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const [successMessage, setSuccessMessage] = useState(location.state?.bookingSuccess || false);
 
   const saloons = [
     { id: 1, name: "Saloon 01" },
@@ -26,6 +26,15 @@ const Dashboard = () => {
     return () => unsubscribe();
   }, [navigate]);
 
+  useEffect(() => {
+    if (location.state?.bookingSuccess) {
+      setSuccessMessage(true);
+      // Hide the banner after 5 seconds
+      const timer = setTimeout(() => setSuccessMessage(false), 5000);
+      return () => clearTimeout(timer); // Cleanup timer
+    }
+  }, [location.state]);
+
   const handleSaloonSelect = (saloonId) => {
     setSuccessMessage(false); // Clear message on new selection
     navigate(`/services/${saloonId}`);
@@ -41,12 +50,14 @@ const Dashboard = () => {
 
   return (
     <div className="auth-container">
+      {successMessage && (
+        <div className="success-banner">
+          Appointment requested successfully!
+        </div>
+      )}
       <div className="auth-box dashboard-box">
         <h1 className="brand-title">Athywas</h1>
         <p className="tagline">Your Beauty Booking Solution</p>
-        {successMessage && (
-          <p className="success-message">Appointment requested successfully!</p>
-        )}
         <h2 className="section-title">Select a Saloon</h2>
         <ul className="saloon-list">
           {saloons.map((saloon) => (
