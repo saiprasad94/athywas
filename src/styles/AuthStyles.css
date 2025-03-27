@@ -126,3 +126,33 @@
     50% { opacity: 1; }
     100% { opacity: 0; }
   }
+
+
+  /* Saloon listing */
+
+.section-title {
+    color: #e91e63; /* Vibrant pink */
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .saloon-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .saloon-item {
+    background-color: #fce4ec; /* Light pink */
+    color: #212121; /* Dark gray */
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .saloon-item:hover {
+    background-color: #f06292; /* Lighter pink on hover */
+    color: #ffffff; /* White text on hover */
+  }
