@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/AuthStyles.css";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [successMessage, setSuccessMessage] = useState(location.state?.bookingSuccess || false);
 
   const saloons = [
     { id: 1, name: "Saloon 01" },
@@ -25,7 +27,8 @@ const Dashboard = () => {
   }, [navigate]);
 
   const handleSaloonSelect = (saloonId) => {
-    navigate(`/services/${saloonId}`); // Navigate to services page
+    setSuccessMessage(false); // Clear message on new selection
+    navigate(`/services/${saloonId}`);
   };
 
   if (loading) {
@@ -41,6 +44,9 @@ const Dashboard = () => {
       <div className="auth-box dashboard-box">
         <h1 className="brand-title">Athywas</h1>
         <p className="tagline">Your Beauty Booking Solution</p>
+        {successMessage && (
+          <p className="success-message">Appointment requested successfully!</p>
+        )}
         <h2 className="section-title">Select a Saloon</h2>
         <ul className="saloon-list">
           {saloons.map((saloon) => (

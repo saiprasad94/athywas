@@ -197,3 +197,50 @@
   .back-button:hover {
     background-color: #f06292; /* Lighter pink on hover */
   }
+
+
+  /* more for service booking and confirmation */
+
+.service-item.selected {
+    background-color: #f06292; /* Highlight selected service */
+    color: #ffffff;
+  }
+  
+  .booking-summary {
+    margin-top: 1.5rem;
+    text-align: left;
+  }
+  
+  .booking-summary h3 {
+    color: #e91e63;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .booking-summary p {
+    color: #212121;
+    margin: 0.3rem 0;
+  }
+  
+  .book-button {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    background-color: #e91e63;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .book-button:hover {
+    background-color: #f06292;
+  }
+  
+  .success-message {
+    color: #e91e63;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
