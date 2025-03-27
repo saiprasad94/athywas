@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { useNavigate, useLocation } from "react-router-dom";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
 import "../styles/AuthStyles.css";
 
 const Dashboard = () => {
@@ -63,6 +63,21 @@ const Dashboard = () => {
     navigate(`/services/${saloonId}`);
   };
 
+  const handleCancelAppointment = async (appointmentId) => {
+    try {
+      const appointmentRef = doc(db, "appointments", appointmentId);
+      await updateDoc(appointmentRef, { status: "cancelled" });
+      setAppointments((prev) =>
+        prev.map((appt) =>
+          appt.id === appointmentId ? { ...appt, status: "cancelled" } : appt
+        )
+      );
+      console.log("Appointment cancelled:", appointmentId);
+    } catch (error) {
+      console.error("Error cancelling appointment:", error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="auth-container">
@@ -93,6 +108,14 @@ const Dashboard = () => {
                   </p>
                   <p>Total: ₹{appt.totalPrice} | Athywas Price: ₹{appt.athywasPrice.toFixed(2)}</p>
                   <p>Status: {appt.status}</p>
+                  {appt.status === "pending" && (
+                    <button
+                      className="cancel-button"
+                      onClick={() => handleCancelAppointment(appt.id)}
+                    >
+                      Cancel
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
