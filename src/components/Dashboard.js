@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import { useNavigate, useLocation } from "react-router-dom";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import "../styles/AuthStyles.css";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState(false);
+  const [appointments, setAppointments] = useState([]);
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,6 +23,8 @@ const Dashboard = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
         navigate("/signin");
+      } else {
+        setUserId(user.uid);
       }
       setLoading(false);
     });
@@ -27,16 +32,34 @@ const Dashboard = () => {
   }, [navigate]);
 
   useEffect(() => {
+    if (userId) {
+      const fetchAppointments = async () => {
+        try {
+          const q = query(collection(db, "appointments"), where("user.uid", "==", userId));
+          const querySnapshot = await getDocs(q);
+          const userAppointments = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setAppointments(userAppointments);
+        } catch (error) {
+          console.error("Error fetching appointments:", error);
+        }
+      };
+      fetchAppointments();
+    }
+  }, [userId]);
+
+  useEffect(() => {
     if (location.state?.bookingSuccess) {
       setSuccessMessage(true);
-      // Hide the banner after 5 seconds
       const timer = setTimeout(() => setSuccessMessage(false), 5000);
-      return () => clearTimeout(timer); // Cleanup timer
+      return () => clearTimeout(timer);
     }
   }, [location.state]);
 
   const handleSaloonSelect = (saloonId) => {
-    setSuccessMessage(false); // Clear message on new selection
+    setSuccessMessage(false);
     navigate(`/services/${saloonId}`);
   };
 
@@ -58,6 +81,23 @@ const Dashboard = () => {
       <div className="auth-box dashboard-box">
         <h1 className="brand-title">Athywas</h1>
         <p className="tagline">Your Beauty Booking Solution</p>
+        {appointments.length > 0 && (
+          <div className="appointments-section">
+            <h2 className="section-title">Your Appointments</h2>
+            <ul className="appointment-list">
+              {appointments.map((appt) => (
+                <li key={appt.id} className="appointment-item">
+                  <p>
+                    <strong>Saloon {appt.saloonId}</strong> -{" "}
+                    {appt.services.map((s) => s.name).join(", ")}
+                  </p>
+                  <p>Total: ₹{appt.totalPrice} | Athywas Price: ₹{appt.athywasPrice.toFixed(2)}</p>
+                  <p>Status: {appt.status}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         <h2 className="section-title">Select a Saloon</h2>
         <ul className="saloon-list">
           {saloons.map((saloon) => (

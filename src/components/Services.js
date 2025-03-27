@@ -7,8 +7,8 @@ import "../styles/AuthStyles.css";
 
 const Services = () => {
   const [loading, setLoading] = useState(true);
-  const [selectedServices, setSelectedServices] = useState([]); // Array for multiple selections
-  const [userId, setUserId] = useState(null);
+  const [selectedServices, setSelectedServices] = useState([]);
+  const [user, setUser] = useState(null); // Store full user object
   const navigate = useNavigate();
   const { saloonId } = useParams();
 
@@ -19,11 +19,11 @@ const Services = () => {
   ];
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser) {
         navigate("/signin");
       } else {
-        setUserId(user.uid);
+        setUser(currentUser); // Store the full user object
       }
       setLoading(false);
     });
@@ -33,10 +33,8 @@ const Services = () => {
   const toggleServiceSelect = (service) => {
     setSelectedServices((prev) => {
       if (prev.some((s) => s.id === service.id)) {
-        // Remove if already selected
         return prev.filter((s) => s.id !== service.id);
       } else {
-        // Add if not selected
         return [...prev, service];
       }
     });
@@ -50,13 +48,17 @@ const Services = () => {
   };
 
   const handleBooking = async () => {
-    if (selectedServices.length === 0) return;
+    if (selectedServices.length === 0 || !user) return;
 
     const { total, athywasPrice } = calculatePrices();
 
     try {
       await addDoc(collection(db, "appointments"), {
-        userId,
+        user: {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || null, // Optional, if set in Firebase Auth
+        },
         saloonId: Number(saloonId),
         services: selectedServices.map((s) => ({ name: s.name, price: s.price })),
         totalPrice: total,

@@ -268,3 +268,33 @@
     90% { opacity: 1; transform: translateY(0); }
     100% { opacity: 0; transform: translateY(-100%); }
   }
+
+
+  /* bookings list in Dashboard */
+
+.appointments-section {
+    margin-bottom: 2rem;
+  }
+  
+  .appointment-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .appointment-item {
+    background-color: #e8f5e9; /* Light green for booked items */
+    color: #212121;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 5px;
+    border: 1px solid #4caf50; /* Green border */
+  }
+  
+  .appointment-item p {
+    margin: 0.3rem 0;
+  }
+  
+  .appointment-item strong {
+    color: #4caf50; /* Green for emphasis */
+  }
