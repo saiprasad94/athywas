@@ -7,7 +7,7 @@ import "../styles/AuthStyles.css";
 
 const Services = () => {
   const [loading, setLoading] = useState(true);
-  const [selectedService, setSelectedService] = useState(null);
+  const [selectedServices, setSelectedServices] = useState([]); // Array for multiple selections
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
   const { saloonId } = useParams();
@@ -23,41 +23,49 @@ const Services = () => {
       if (!user) {
         navigate("/signin");
       } else {
-        setUserId(user.uid); // Store user ID for booking
+        setUserId(user.uid);
       }
       setLoading(false);
     });
     return () => unsubscribe();
   }, [navigate]);
 
-  const calculatePrices = (price) => {
-    const total = price; // Could sum multiple services later
-    const discount = 0.1; // 10% discount as per your doc
+  const toggleServiceSelect = (service) => {
+    setSelectedServices((prev) => {
+      if (prev.some((s) => s.id === service.id)) {
+        // Remove if already selected
+        return prev.filter((s) => s.id !== service.id);
+      } else {
+        // Add if not selected
+        return [...prev, service];
+      }
+    });
+  };
+
+  const calculatePrices = () => {
+    const total = selectedServices.reduce((sum, service) => sum + service.price, 0);
+    const discount = 0.1; // 10% discount
     const athywasPrice = total * (1 - discount);
     return { total, athywasPrice };
   };
 
-  const handleServiceSelect = (service) => {
-    setSelectedService(service);
-  };
-
   const handleBooking = async () => {
-    if (!selectedService) return;
+    if (selectedServices.length === 0) return;
 
-    const { total, athywasPrice } = calculatePrices(selectedService.price);
+    const { total, athywasPrice } = calculatePrices();
 
     try {
       await addDoc(collection(db, "appointments"), {
         userId,
         saloonId: Number(saloonId),
-        serviceName: selectedService.name,
+        services: selectedServices.map((s) => ({ name: s.name, price: s.price })),
         totalPrice: total,
         athywasPrice: athywasPrice,
         timestamp: new Date().toISOString(),
         status: "pending",
       });
-      console.log("Appointment booked!");
-      navigate("/dashboard", { state: { bookingSuccess: true } }); // Pass success state
+      console.log("Appointment booked with services:", selectedServices);
+      navigate("/dashboard", { state: { bookingSuccess: true } });
     } catch (error) {
       console.error("Booking error:", error);
     }
@@ -81,19 +89,23 @@ const Services = () => {
           {services.map((service) => (
             <li
               key={service.id}
-              className={`service-item ${selectedService?.id === service.id ? "selected" : ""}`}
-              onClick={() => handleServiceSelect(service)}
+              className={`service-item ${selectedServices.some((s) => s.id === service.id) ? "selected" : ""}`}
+              onClick={() => toggleServiceSelect(service)}
             >
               {service.name} - ₹{service.price}
             </li>
           ))}
         </ul>
-        {selectedService && (
+        {selectedServices.length > 0 && (
           <div className="booking-summary">
             <h3>Booking Summary</h3>
-            <p>Service: {selectedService.name}</p>
-            <p>Total: ₹{calculatePrices(selectedService.price).total}</p>
-            <p>Athywas Price: ₹{calculatePrices(selectedService.price).athywasPrice.toFixed(2)}</p>
+            {selectedServices.map((service) => (
+              <p key={service.id}>
+                {service.name}: ₹{service.price}
+              </p>
+            ))}
+            <p>Total: ₹{calculatePrices().total}</p>
+            <p>Athywas Price: ₹{calculatePrices().athywasPrice.toFixed(2)}</p>
             <button className="book-button" onClick={handleBooking}>
               Request Appointment
             </button>
