@@ -37,10 +37,12 @@ const Dashboard = () => {
         try {
           const q = query(collection(db, "appointments"), where("user.uid", "==", userId));
           const querySnapshot = await getDocs(q);
-          const userAppointments = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
+          const userAppointments = querySnapshot.docs
+            .map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }))
+            .filter((appt) => appt.status !== "cancelled"); // Filter out cancelled
           setAppointments(userAppointments);
         } catch (error) {
           console.error("Error fetching appointments:", error);
@@ -67,12 +69,9 @@ const Dashboard = () => {
     try {
       const appointmentRef = doc(db, "appointments", appointmentId);
       await updateDoc(appointmentRef, { status: "cancelled" });
-      setAppointments((prev) =>
-        prev.map((appt) =>
-          appt.id === appointmentId ? { ...appt, status: "cancelled" } : appt
-        )
-      );
-      console.log("Appointment cancelled:", appointmentId);
+      // Remove the cancelled appointment from the UI
+      setAppointments((prev) => prev.filter((appt) => appt.id !== appointmentId));
+      console.log("Appointment cancelled and removed:", appointmentId);
     } catch (error) {
       console.error("Error cancelling appointment:", error);
     }
