@@ -49,15 +49,15 @@ const Services = () => {
 
   const handleBooking = async () => {
     if (selectedServices.length === 0 || !user) return;
-
+  
     const { total, athywasPrice } = calculatePrices();
-
+  
     try {
-      await addDoc(collection(db, "appointments"), {
+      const docRef = await addDoc(collection(db, "appointments"), {
         user: {
           uid: user.uid,
           email: user.email,
-          displayName: user.displayName || null, // Optional, if set in Firebase Auth
+          displayName: user.displayName || null,
         },
         saloonId: Number(saloonId),
         services: selectedServices.map((s) => ({ name: s.name, price: s.price })),
@@ -66,8 +66,18 @@ const Services = () => {
         timestamp: new Date().toISOString(),
         status: "pending",
       });
-      console.log("Appointment booked with services:", selectedServices);
-      navigate("/dashboard", { state: { bookingSuccess: true } });
+      navigate("/confirmation", {
+        state: {
+          booking: {
+            bookingId: docRef.id,
+            saloonId,
+            services: selectedServices,
+            totalPrice: total,
+            athywasPrice: athywasPrice,
+            status: "pending",
+          },
+        },
+      });
     } catch (error) {
       console.error("Booking error:", error);
     }

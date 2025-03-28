@@ -4,6 +4,7 @@ import Signup from "./components/Signup";
 import Signin from "./components/Signin";
 import Dashboard from "./components/Dashboard";
 import Services from "./components/Services"; // New component
+import Confirmation from "./components/Confirmation";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/signin" element={<Signin />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/services/:saloonId" element={<Services />} /> {/* New route */}
+        <Route path="/confirmation" element={<Confirmation />} />
         <Route path="/" element={<Signin />} />
       </Routes>
     </Router>
