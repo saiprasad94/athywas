@@ -3,16 +3,12 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { useNavigate, useParams } from "react-router-dom";
 import { collection, addDoc } from "firebase/firestore";
-import Datetime from "react-datetime";
-import moment from "moment";
 import "../styles/AuthStyles.css";
-import "../styles/ReactDatetime.css";
 
 const Services = () => {
   const [loading, setLoading] = useState(true);
   const [selectedServices, setSelectedServices] = useState([]);
-  const [user, setUser] = useState(null);
-  const [appointmentDate, setAppointmentDate] = useState(null); // Store date/time
+  const [user, setUser] = useState(null); // Store full user object
   const navigate = useNavigate();
   const { saloonId } = useParams();
 
@@ -27,7 +23,7 @@ const Services = () => {
       if (!currentUser) {
         navigate("/signin");
       } else {
-        setUser(currentUser);
+        setUser(currentUser); // Store the full user object
       }
       setLoading(false);
     });
@@ -46,18 +42,18 @@ const Services = () => {
 
   const calculatePrices = () => {
     const total = selectedServices.reduce((sum, service) => sum + service.price, 0);
-    const discount = 0.1;
+    const discount = 0.1; // 10% discount
     const athywasPrice = total * (1 - discount);
     return { total, athywasPrice };
   };
 
   const handleBooking = async () => {
-    if (selectedServices.length === 0 || !user || !appointmentDate) return;
-
+    if (selectedServices.length === 0 || !user) return;
+  
     const { total, athywasPrice } = calculatePrices();
-
+  
     try {
-      await addDoc(collection(db, "appointments"), {
+      const docRef = await addDoc(collection(db, "appointments"), {
         user: {
           uid: user.uid,
           email: user.email,
@@ -67,18 +63,17 @@ const Services = () => {
         services: selectedServices.map((s) => ({ name: s.name, price: s.price })),
         totalPrice: total,
         athywasPrice: athywasPrice,
-        appointmentDate: appointmentDate.toISOString(), // Save as ISO string
         timestamp: new Date().toISOString(),
         status: "pending",
       });
       navigate("/confirmation", {
         state: {
           booking: {
+            bookingId: docRef.id,
             saloonId,
             services: selectedServices,
             totalPrice: total,
             athywasPrice: athywasPrice,
-            appointmentDate: appointmentDate.toISOString(),
             status: "pending",
           },
         },
@@ -86,11 +81,6 @@ const Services = () => {
     } catch (error) {
       console.error("Booking error:", error);
     }
-  };
-
-  // Validate date/time (must be in the future)
-  const isValidDate = (current) => {
-    return current.isAfter(moment().subtract(1, "day")); // Disable past dates
   };
 
   if (loading) {
@@ -128,20 +118,7 @@ const Services = () => {
             ))}
             <p>Total: ₹{calculatePrices().total}</p>
             <p>Athywas Price: ₹{calculatePrices().athywasPrice.toFixed(2)}</p>
-            <div className="datetime-picker">
-              <label>Select Date & Time:</label>
-              <Datetime
-                value={appointmentDate}
-                onChange={(date) => setAppointmentDate(date)}
-                isValidDate={isValidDate}
-                inputProps={{ placeholder: "Select date and time", readOnly: true }}
-              />
-            </div>
-            <button
-              className="book-button"
-              onClick={handleBooking}
-              disabled={!appointmentDate} // Disable until date is selected
-            >
+            <button className="book-button" onClick={handleBooking}>
               Request Appointment
             </button>
           </div>
