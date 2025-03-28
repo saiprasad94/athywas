@@ -3,6 +3,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { useNavigate, useLocation } from "react-router-dom";
 import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
+import moment from "moment";
 import "../styles/AuthStyles.css";
 
 const Dashboard = () => {
@@ -42,7 +43,7 @@ const Dashboard = () => {
               id: doc.id,
               ...doc.data(),
             }))
-            .filter((appt) => appt.status !== "cancelled"); // Filter out cancelled
+            .filter((appt) => appt.status !== "cancelled");
           setAppointments(userAppointments);
         } catch (error) {
           console.error("Error fetching appointments:", error);
@@ -69,7 +70,6 @@ const Dashboard = () => {
     try {
       const appointmentRef = doc(db, "appointments", appointmentId);
       await updateDoc(appointmentRef, { status: "cancelled" });
-      // Remove the cancelled appointment from the UI
       setAppointments((prev) => prev.filter((appt) => appt.id !== appointmentId));
       console.log("Appointment cancelled and removed:", appointmentId);
     } catch (error) {
@@ -106,6 +106,12 @@ const Dashboard = () => {
                     {appt.services.map((s) => s.name).join(", ")}
                   </p>
                   <p>Total: ₹{appt.totalPrice} | Athywas Price: ₹{appt.athywasPrice.toFixed(2)}</p>
+                  <p>
+                    Date & Time:{" "}
+                    {appt.appointmentDate
+                      ? moment(appt.appointmentDate).format("MMMM Do YYYY, h:mm a")
+                      : "Not set"}
+                  </p>
                   <p>Status: {appt.status}</p>
                   {appt.status === "pending" && (
                     <button

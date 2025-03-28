@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate, useLocation } from "react-router-dom";
+import moment from "moment";
 import "../styles/AuthStyles.css";
 
 const Confirmation = () => {
@@ -26,9 +27,6 @@ const Confirmation = () => {
         <h2 className="section-title">Booking Confirmed</h2>
         <div className="booking-summary">
           <p>
-            <strong>Booking ID:</strong> {booking.bookingId}
-          </p>
-          <p>
             <strong>Saloon:</strong> Saloon {booking.saloonId}
           </p>
           <p>
@@ -40,6 +38,12 @@ const Confirmation = () => {
           </p>
           <p>
             <strong>Athywas Price:</strong> ₹{booking.athywasPrice?.toFixed(2)}
+          </p>
+          <p>
+            <strong>Date & Time:</strong>{" "}
+            {booking.appointmentDate
+              ? moment(booking.appointmentDate).format("MMMM Do YYYY, h:mm a")
+              : "Not set"}
           </p>
           <p>
             <strong>Status:</strong> {booking.status}
